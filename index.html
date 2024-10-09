@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Converter Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CV BY RENZZ 500K TOOLS NEED LANGSUNG AJA PM TELE @SKYRENZZ</h1>
+        </header>
+        <main>
+            <!-- Konversi TXT ke VCF -->
+            <section class="file-section">
+                <h2>Konversi TXT ke VCF</h2>
+                <input type="file" id="txt-file" accept=".txt" multiple>
+                <input type="text" id="contact-name" placeholder="Nama Kontak" required>
+                <input type="number" id="contact-count" placeholder="Jumlah Kontak per File" required>
+                <input type="text" id="vcf-file-name" placeholder="Nama File VCF" required>
+                <input type="number" id="start-number" placeholder="Nomor Awal" required> <!-- Input untuk nomor awal -->
+                <select id="number-position">
+                    <option value="before">Nomor awal di depan</option>
+                    <option value="after">Nomor awal di belakang</option>
+                </select>
+                <button onclick="convertTxtToVcf()">Konversi</button>
+                <p id="file-info"></p>
+            </section>
+
+<!-- Split File VCF -->
+<section class="file-section">
+    <h2>Pembagian File VCF</h2>
+    <input type="file" id="vcf-file" accept=".vcf">
+    <input type="text" id="split-file-name" placeholder="Nama File" required>
+    <input type="number" id="contacts-per-file" placeholder="Jumlah Kontak per File" required>
+    <button onclick="splitVcfFile()">Pisah File</button>
+    <p id="vcf-split-info"></p>
+</section>
+
+
+
+            <!-- Gabungkan File TXT -->
+            <section class="file-section">
+                <h2>Gabungkan File TXT</h2>
+                <input type="file" id="merge-files" accept=".txt" multiple>
+                <input type="text" id="merged-file-name" placeholder="Nama File Gabungan" required>
+                <button onclick="mergeTxtFiles()">Gabungkan</button>
+                <p id="merge-file-info"></p>
+            </section>
+
+           <!-- Konversi VCF ke TXT -->
+    <section class="file-section">
+        <h2>Konversi VCF ke TXT</h2>
+        <input type="file" id="vcf-files" accept=".vcf" multiple>
+        <input type="text" id="txt-file-name" placeholder="Nama File TXT" required>
+        <input type="checkbox" id="combine-files"> Gabungkan File
+        <button onclick="convertVcfToTxt()">Konversi</button>
+        <p id="vcf-to-txt-info"></p>
+    </section>
+           
+
+            <!-- Ganti Nama Kontak di VCF -->
+            <section class="file-section">
+                <h2>Ganti Nama Kontak di VCF</h2>
+                <input type="file" id="vcf-edit-file" accept=".vcf">
+                <input type="text" id="new-contact-name" placeholder="Nama Kontak Baru" required>
+                <input type="text" id="edit-file-name" placeholder="Nama File VCF" required>
+                <button onclick="editVcfContactName()">Ganti Nama</button>
+                <p id="vcf-edit-info"></p>
+            </section>
+
+            <!-- File yang Diupload -->
+            <section class="file-section">
+                <h2>File yang Diupload</h2>
+                <div id="uploaded-files" class="file-list"></div>
+            </section>
+        </main>
+    </div>
+    <script>
+        let uploadedFiles = [];
+        let fileInputIdMap = {
+            'txt-file': 'txt-file',
+            'merge-files': 'merge-files',
+            'vcf-files': 'vcf-files',
+            'vcf-split-file': 'vcf-split-file',
+            'vcf-edit-file': 'vcf-edit-file'
+        };
+
+        // Fungsi untuk menampilkan daftar file yang diunggah
+        function displayUploadedFiles() {
+            const uploadedFilesContainer = document.getElementById('uploaded-files');
+            uploadedFilesContainer.innerHTML = ''; // Kosongkan daftar sebelum memperbarui
+
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('file-item');
+                fileItem.textContent = file.name;
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Hapus';
+                removeButton.onclick = () => removeFile(index);
+
+                fileItem.appendChild(removeButton);
+                uploadedFilesContainer.appendChild(fileItem);
+            });
+        }
+
+        // Fungsi untuk menghapus file dari daftar
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1); // Hapus file dari array
+            displayUploadedFiles(); // Perbarui daftar tampilan
+        }
+
+        // Fungsi untuk menambahkan file ke array uploadedFiles dan menampilkannya
+        function handleFileInput(event) {
+            const inputId = event.target.id;
+            const files = Array.from(event.target.files);
+            uploadedFiles = uploadedFiles.filter(file => !files.includes(file)); // Hapus file yang sudah ada
+            uploadedFiles.push(...files); // Tambah file baru
+            displayUploadedFiles(); // Tampilkan file yang diunggah
+        }
+
+        // Event listeners untuk file inputs
+        for (const [key, id] of Object.entries(fileInputIdMap)) {
+            document.getElementById(id).addEventListener('change', handleFileInput);
+        }
+
+        //FUNGSI TXT TO VCF
+       // FUNGSI TXT TO VCF
+function convertTxtToVcf() {
+    const fileInput = document.getElementById('txt-file');
+    const contactName = document.getElementById('contact-name').value;
+    const vcfFileName = document.getElementById('vcf-file-name').value;
+    const contactCount = parseInt(document.getElementById('contact-count').value, 10);
+    const startNumberInput = document.getElementById('start-number').value; // Ambil nomor awal sebagai string
+    const numberPosition = document.getElementById('number-position').value;
+    const fileInfo = document.getElementById('file-info');
+
+    if (fileInput.files.length === 0) {
+        alert('Silakan pilih file TXT terlebih dahulu.');
+        return;
+    }
+    if (!contactName || isNaN(contactCount) || contactCount <= 0) {
+        alert('Silakan masukkan nama kontak dan jumlah kontak yang valid.');
+        return;
+    }
+
+    const files = fileInput.files;
+
+    const readFile = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const lines = event.target.result.split('\n').filter(line => line.trim() !== '');
+                const contacts = lines.map(line => {
+                    const contactNumber = line.trim().replace(/[^0-9+]/g, ''); // Pastikan simbol "+" tetap ada
+                    return contactNumber.startsWith('+') ? contactNumber : `+${contactNumber}`;
+                });
+                resolve({ contacts, fileName: file.name.replace('.txt', '') });
+            };
+
+            reader.onerror = function(error) {
+                reject('Terjadi kesalahan saat membaca file:', error);
+            };
+
+            reader.readAsText(file);
+        });
+    };
+
+    const processFiles = async () => {
+        try {
+            const allFileData = await Promise.all(Array.from(files).map(file => readFile(file)));
+
+            if (allFileData.every(data => data.contacts.length === 0)) {
+                fileInfo.textContent = 'Tidak ada kontak ditemukan dalam file.';
+                return;
+            }
+
+            fileInfo.textContent = `Total file VCF yang akan diunduh: ${allFileData.length}`;
+
+            let contactIndex = 1; // Urutan nama kontak dimulai dari 1
+            let fileNumber = startNumberInput ? parseInt(startNumberInput, 10) : 1; // Gunakan nomor awal jika diisi, jika tidak mulai dari 1
+
+            if (isNaN(fileNumber)) {
+                fileNumber = 1; // Default jika input salah
+            }
+
+            for (const { contacts, fileName } of allFileData) {
+                const totalFiles = Math.ceil(contacts.length / contactCount);
+
+                for (let i = 0; i < totalFiles; i++) {
+                    const startIndex = i * contactCount;
+                    const endIndex = Math.min(startIndex + contactCount, contacts.length);
+                    const contactsChunk = contacts.slice(startIndex, endIndex);
+                    let vcfFileContent = '';
+
+                    contactsChunk.forEach(contact => {  // Perbaikan variabel 'contact'
+                        const contactNumber = (contactIndex++).toString().padStart(3, '0'); // Urutkan kontak dimulai dari 001
+                        vcfFileContent += `BEGIN:VCARD\nVERSION:3.0\nFN:${contactName} ${contactNumber}\nTEL:${contact}\nEND:VCARD\n`;
+                    });
+
+                    // Gunakan setTimeout untuk memastikan unduhan file tidak tumpang tindih
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Delay 100ms untuk setiap file
+
+                    const vcfBlob = new Blob([vcfFileContent], { type: 'text/vcard' });
+                    const vcfUrl = URL.createObjectURL(vcfBlob);
+                    const link = document.createElement('a');
+                    link.href = vcfUrl;
+
+                    const vcfFileNameInput = document.getElementById('vcf-file-name').value;
+                    const finalVcfFileName = vcfFileNameInput ? vcfFileNameInput : fileName; // Gunakan nama file TXT jika VCF kosong
+
+                    // Penentuan posisi nomor pada nama file
+                    if (numberPosition === 'before') {
+                        link.download = `${fileNumber}_${finalVcfFileName}.vcf`;
+                    } else {
+                        link.download = `${finalVcfFileName}_${fileNumber}.vcf`;
+                    }
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(vcfUrl);
+
+                    console.log(`Downloaded file: ${fileNumber}_${finalVcfFileName}.vcf`);
+
+                    fileNumber++; // Naikkan nomor file untuk setiap file baru
+                }
+            }
+
+            fileInfo.textContent = 'Konversi selesai. Semua file VCF telah diunduh.';
+        } catch (error) {
+            console.error(error);
+            fileInfo.textContent = 'Terjadi kesalahan saat konversi.';
+        }
+    };
+
+    processFiles();
+}
+
+
+
+
+        // Fungsi untuk menggabungkan file TXT
+        // Fungsi untuk menggabungkan file TXT
+        async function mergeTxtFiles() {
+    const fileInput = document.getElementById('merge-files');
+    const mergedFileName = document.getElementById('merged-file-name').value;
+    const mergeFileInfo = document.getElementById('merge-file-info');
+
+    if (fileInput.files.length === 0) {
+        alert('Silakan pilih file TXT terlebih dahulu.');
+        return;
+    }
+    if (!mergedFileName) {
+        alert('Silakan masukkan nama file gabungan.');
+        return;
+    }
+
+    let mergedContent = '';
+    const files = Array.from(fileInput.files);
+
+    for (const file of files) {
+        const content = await readFileAsync(file);
+        mergedContent += content + '\n';
+    }
+
+    const mergedBlob = new Blob([mergedContent], { type: 'text/plain' });
+    const mergedUrl = URL.createObjectURL(mergedBlob);
+    const link = document.createElement('a');
+    link.href = mergedUrl;
+    link.download = `${mergedFileName}.txt`;
+    link.click();
+    URL.revokeObjectURL(mergedUrl);
+    mergeFileInfo.textContent = 'Penggabungan selesai.';
+}
+
+function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            resolve(event.target.result);
+        };
+        reader.onerror = function(error) {
+            reject(error);
+        };
+        reader.readAsText(file);
+    });
+}
+
+
+
+        // Fungsi untuk mengonversi VCF ke TXT
+        // Fungsi untuk mengonversi VCF ke TXT
+function convertVcfToTxt() {
+    const txtFileName = document.getElementById('txt-file-name').value;
+    const vcfToTxtInfo = document.getElementById('vcf-to-txt-info');
+
+    if (uploadedFiles.length === 0) {
+        alert('Silakan pilih file VCF terlebih dahulu.');
+        return;
+    }
+    if (!txtFileName) {
+        alert('Silakan masukkan nama file TXT.');
+        return;
+    }
+
+    let allContacts = [];
+
+    // Fungsi untuk membaca file VCF dan mengembalikan isi sebagai string
+    const readFile = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                resolve(event.target.result);
+            };
+            reader.onerror = function(error) {
+                console.error('Terjadi kesalahan saat membaca file:', error);
+                reject(error);
+                vcfToTxtInfo.textContent = 'Terjadi kesalahan saat konversi.';
+            };
+            reader.readAsText(file);
+        });
+    };
+
+    // Fungsi untuk memproses konten file dan mengambil nomor telepon
+    const processFileContent = (fileContent) => {
+        const vcardArray = fileContent.split(/END:VCARD\s*/).filter(vcard => vcard.trim() !== '');
+        const contacts = vcardArray.map(vcard => {
+            const telMatch = vcard.match(/TEL:\+?(\d+)/);
+            return telMatch ? telMatch[1] : '';
+        }).filter(tel => tel !== '');
+        return contacts;
+    };
+
+    // Fungsi untuk memproses semua file secara berurutan
+    const processFilesSequentially = async () => {
+        for (const file of uploadedFiles) {
+            try {
+                const content = await readFile(file);
+                const contacts = processFileContent(content);
+                allContacts = allContacts.concat(contacts); // Gabung sambil menjaga urutan
+            } catch (error) {
+                console.error('Terjadi kesalahan saat membaca file:', error);
+                return;
+            }
+        }
+
+        // Gabungkan semua nomor telepon menjadi satu file TXT
+        const txtBlob = new Blob([allContacts.join('\n')], { type: 'text/plain' });
+        const url = URL.createObjectURL(txtBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${txtFileName}.txt`;
+        link.click();
+        URL.revokeObjectURL(url);
+        vcfToTxtInfo.textContent = 'Konversi selesai. File TXT gabungan telah diunduh.';
+    };
+
+    // Memulai proses pemrosesan file secara berurutan
+    processFilesSequentially();
+}
+
+
+        // Fungsi untuk memecah file VCF
+        function splitVcfFile() {
+    const fileInput = document.getElementById('vcf-file');
+    const splitFileName = document.getElementById('split-file-name').value;
+    const contactsPerFile = parseInt(document.getElementById('contacts-per-file').value, 10);
+    const vcfSplitInfo = document.getElementById('vcf-split-info');
+
+    if (fileInput.files.length === 0) {
+        alert('Silakan pilih file VCF terlebih dahulu.');
+        return;
+    }
+    if (!splitFileName || isNaN(contactsPerFile) || contactsPerFile <= 0) {
+        alert('Silakan masukkan nama file dan jumlah kontak per file yang valid.');
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const vcfData = event.target.result;
+        const vcardArray = vcfData.split(/(?=BEGIN:VCARD)/).filter(vcard => vcard.trim() !== '');
+
+        let fileCount = 0;
+
+        while (vcardArray.length > 0) {
+            const splitData = vcardArray.splice(0, contactsPerFile).join('\n') + 'END:VCARD\n';
+            const vcfBlob = new Blob([splitData], { type: 'text/vcard' });
+            const vcfUrl = URL.createObjectURL(vcfBlob);
+
+            // Membuat link download
+            const link = document.createElement('a');
+            link.href = vcfUrl;
+            link.download = `${splitFileName}_${fileCount + 1}.vcf`;
+            link.style.display = 'none'; // Menyembunyikan link
+
+            // Menambahkan link ke dokumen
+            document.body.appendChild(link);
+
+            // Trigger klik pada link untuk mengunduh secara otomatis
+            link.click();
+
+            // Menghapus link setelah diunduh
+            document.body.removeChild(link);
+
+            fileCount++;
+        }
+
+        // Menampilkan informasi jumlah file yang diunduh
+        vcfSplitInfo.textContent = `Pembagian file selesai. Total ${fileCount} file VCF telah diunduh.`;
+    };
+
+    reader.onerror = function(error) {
+        console.error('Terjadi kesalahan saat membaca file:', error);
+        vcfSplitInfo.textContent = 'Terjadi kesalahan saat pembagian.';
+    };
+
+    reader.readAsText(file);
+}
+
+        // Fungsi untuk mengganti nama kontak di VCF
+        function editVcfContactName() {
+    const fileInput = document.getElementById('vcf-edit-file');
+    const newContactName = document.getElementById('new-contact-name').value;
+    const editFileName = document.getElementById('edit-file-name').value;
+    const vcfEditInfo = document.getElementById('vcf-edit-info');
+
+    if (fileInput.files.length === 0) {
+        alert('Silakan pilih file VCF terlebih dahulu.');
+        return;
+    }
+    if (!newContactName || !editFileName) {
+        alert('Silakan masukkan nama kontak baru dan nama file VCF.');
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        let vcfContent = event.target.result;
+        
+        // Pisahkan setiap vCard berdasarkan pola BEGIN:VCARD dan END:VCARD
+        const vcardArray = vcfContent.split(/END:VCARD\s*/).filter(vcard => vcard.trim() !== '');
+
+        // Proses mengganti nama setiap kontak dengan urutan nomor
+        let updatedVcfContent = vcardArray.map((vcard, index) => {
+            // Mengganti pola 'FN:...' dengan nama baru yang diikuti nomor urut
+            return vcard.replace(/FN:[^\n]*/g, `FN:${newContactName} ${index + 1}`);
+        }).join('END:VCARD\n'); // Menyusun kembali menjadi format VCF
+
+        const editedBlob = new Blob([updatedVcfContent], { type: 'text/vcard' });
+        const editedUrl = URL.createObjectURL(editedBlob);
+        const link = document.createElement('a');
+        link.href = editedUrl;
+        link.download = `${editFileName}.vcf`;
+        link.click();
+        URL.revokeObjectURL(editedUrl);
+        vcfEditInfo.textContent = 'Penggantian nama selesai.';
+    };
+
+    reader.readAsText(file);
+}
+
+
+
+
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .file-section {
+            margin-bottom: 20px;
+        }
+        .file-list {
+            margin-top: 10px;
+        }
+        .file-item {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item button {
+            background: #f44336;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</body>
+</html>

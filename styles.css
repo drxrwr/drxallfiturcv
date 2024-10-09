@@ -1,0 +1,240 @@
+/* Reset Dasar */
+* {
+    box-sizing: border-box; /* Memastikan padding dan border termasuk dalam total lebar dan tinggi elemen */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif; /* Menggunakan font modern dan bersih */
+    background-color: #f7f7f7; /* Latar belakang abu-abu terang */
+    line-height: 1.6; /* Meningkatkan keterbacaan */
+    opacity: 0; /* Mulai dengan opacity 0 untuk efek fade-in */
+    animation: fadeIn 1s forwards; /* Animasi fade-in untuk body */
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1; /* Opacity akhir */
+    }
+}
+
+.container {
+    max-width: 900px; /* Lebar maksimum untuk layar besar */
+    margin: 0 auto; /* Pusatkan container */
+    padding: 20px; /* Padding untuk konten di dalam */
+    background: #fff; /* Latar belakang putih untuk konten */
+    border-radius: 8px; /* Sudut membulat */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan halus untuk kedalaman */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Efek transisi tambahan */
+    opacity: 0; /* Mulai dengan opacity 0 untuk efek fade-in */
+    animation: slideIn 0.5s forwards; /* Animasi slide-in untuk container */
+    animation-delay: 0.2s; /* Penundaan untuk kemunculan container */
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px); /* Mulai sedikit lebih rendah */
+        opacity: 0; /* Mulai dengan opacity 0 */
+    }
+    to {
+        transform: translateY(0); /* Berakhir di posisi asli */
+        opacity: 1; /* Opacity akhir */
+    }
+}
+
+header {
+    background: linear-gradient(90deg, #4a90e2 0%, #357abd 100%); /* Latar belakang gradasi */
+    color: white; /* Warna teks putih */
+    padding: 20px 0; /* Padding untuk header */
+    text-align: center; /* Teks rata tengah */
+    border-radius: 8px; /* Sudut membulat */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan halus */
+    transition: transform 0.3s ease; /* Transisi ditambahkan untuk header */
+}
+
+header:hover {
+    transform: scale(1.02); /* Efek skala sedikit saat hover */
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.2em; /* Ukuran font ditingkatkan untuk visibilitas lebih baik */
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Efek bayangan teks ditambahkan */
+    transition: color 0.3s ease, text-shadow 0.3s ease; /* Transisi untuk perubahan warna dan bayangan teks */
+}
+
+h1:hover {
+    color: #d4e6f7; /* Ubah warna saat hover untuk header */
+    text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6); /* Tambahkan efek cahaya pada hover */
+}
+
+.file-section {
+    margin: 20px 0; /* Spasi di atas dan bawah */
+    padding: 20px; /* Padding untuk bagian */
+    background: #fff; /* Latar belakang putih */
+    border-radius: 8px; /* Sudut membulat */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan halus */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transisi ditambahkan */
+}
+
+.file-section:hover {
+    background-color: #f7f7f7; /* Efek hover */
+    transform: scale(1.02); /* Efek skala sedikit saat hover */
+}
+
+input[type="file"],
+input[type="text"],
+input[type="number"] {
+    width: calc(100% - 22px); /* Perhitungan lebar responsif */
+    padding: 10px; /* Padding untuk input */
+    margin: 10px 0; /* Margin untuk spasi */
+    border: 1px solid #ddd; /* Warna border */
+    border-radius: 4px; /* Sudut membulat */
+    font-size: 1em; /* Ukuran font */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Transisi untuk warna border, bayangan, dan skala */
+}
+
+input[type="file"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus {
+    border-color: #4a90e2; /* Efek fokus */
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Efek cahaya pada fokus */
+    transform: scale(1.01); /* Sedikit skala input saat fokus */
+    outline: none; /* Hapus outline default */
+}
+
+input[type="text"].error {
+    border-color: #e94e77; /* Warna border kesalahan */
+    animation: shake 0.5s; /* Animasi goyangan saat kesalahan */
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 0); }
+    25% { transform: translate(-1px, 0); }
+    50% { transform: translate(1px, 0); }
+    75% { transform: translate(-1px, 0); }
+    100% { transform: translate(1px, 0); }
+}
+
+button {
+    padding: 10px 20px; /* Padding untuk tombol */
+    background-color: #4a90e2; /* Warna tombol */
+    color: white; /* Warna teks */
+    border: none; /* Tanpa border */
+    border-radius: 4px; /* Sudut membulat */
+    cursor: pointer; /* Kursor pointer saat hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan halus */
+    font-size: 1em; /* Ukuran font tombol */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Transisi untuk warna background, skala, dan bayangan */
+    animation: bounce 0.5s forwards; /* Animasi bounce untuk tombol */
+    animation-delay: 0.5s; /* Penundaan untuk kemunculan tombol */
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+button:hover {
+    background-color: #357abd; /* Warna saat hover */
+    transform: scale(1.05); /* Sedikit perbesar ukuran saat hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Tambahkan bayangan saat hover */
+    filter: brightness(1.1); /* Efek kecerahan */
+}
+
+button:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Efek saat aktif */
+    transform: scale(0.98); /* Sedikit perkecil ukuran saat aktif */
+}
+
+#uploaded-files {
+    margin-top: 20px; /* Spasi di atas bagian file yang diunggah */
+}
+
+.file-item {
+    padding: 10px; /* Padding untuk setiap item file */
+    background: #eaf2f8; /* Latar belakang terang untuk item file */
+    border: 1px solid #cfd8dc; /* Warna border */
+    border-radius: 4px; /* Sudut membulat */
+    margin-bottom: 10px; /* Spasi antar item */
+    display: flex; /* Layout flexbox */
+    justify-content: space-between; /* Spasi antar elemen */
+    align-items: center; /* Penyelarasan tengah */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transisi untuk latar belakang dan skala */
+    opacity: 0; /* Mulai dengan opacity 0 untuk efek fade-in */
+    animation: fadeIn 0.5s forwards; /* Animasi fade-in untuk item file */
+}
+
+.file-item:nth-child(n) {
+    animation-delay: calc(0.2s * var(--i)); /* Kemunculan bertahap untuk item file */
+}
+
+.file-item:hover {
+    background-color: #d7e4f4; /* Efek hover untuk item file */
+    transform: translateY(-2px); /* Gerakan ke atas sedikit saat hover */
+}
+
+/* Tambahkan efek pulsa untuk status loading */
+.file-item.loading {
+    animation: pulse 1.5s infinite; /* Animasi pulsa */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.file-item button {
+    background: #e94e77; /* Warna tombol untuk item file */
+    margin-left: 10px; /* Spasi di kiri */
+    transition: background-color 0.2s ease, transform 0.2s ease; /* Transisi untuk tombol */
+}
+
+.file-item button:hover {
+    background: #d43f66; /* Warna hover untuk tombol */
+    transform: scale(1.05); /* Efek skala saat hover */
+}
+
+/* Desain Responsif */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px; /* Sesuaikan padding untuk layar lebih kecil */
+    }
+
+    h1 {
+        font-size: 1.8em; /* Sesuaikan ukuran header untuk layar lebih kecil */
+    }
+
+    input[type="file"],
+    input[type="text"],
+    input[type="number"],
+    button {
+        font-size: 0.9em; /* Ukuran font lebih kecil untuk input dan tombol */
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em; /* Penyesuaian lebih lanjut untuk layar mobile */
+    }
+
+    button {
+        width: 100%; /* Tombol full-width pada mobile */
+    }
+}
